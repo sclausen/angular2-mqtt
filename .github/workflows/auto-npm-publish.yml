@@ -1,0 +1,24 @@
+name: auto-npm-publish
+on:
+  push:
+    tags:
+      - "*"  # This will run on any tag pushed. 
+jobs:
+  publish:
+    # if: github.event.base_ref == 'refs/heads/master' uncomment this if any for master (main) branch
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 10
+      - run: npm install
+      - run: npm test
+      - run: npm run build:prod
+      - name: NPM Publish
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          package: ./dist/ngx-mqtt/package.json
+          check-version: true
+          token: ${{ secrets.NPM_TOKEN }}
+
